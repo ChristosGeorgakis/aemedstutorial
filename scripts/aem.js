@@ -670,6 +670,43 @@ async function loadSections(element) {
   }
 }
 
+/**
+ * Gets placeholder object.
+ * @param {string} [prefix] Location of placeholders
+ * @returns {object} Window placeholders object
+ */
+// eslint-disable-next-line import/prefer-default-export
+async function fetchPlaceholders(prefix = 'default') {
+  window.placeholders = window.placeholders || {};
+  if(!window.placeholders[prefix]) {
+    window.placeholders[prefix] = new Promise(resolve => {
+    let localizedURL = new URL(window.location.origin+"/"+prefix+"/placeholder.json");
+    if (prefix=='') {
+      localizedURL = new URL(window.location.origin+"/placeholders.json");
+    }
+    fetch(localizedURL)
+      .then(resp => {
+        if(resp.ok){
+          console.log(resp.json.total);
+          return resp.json;
+        }
+        return {};
+      })
+        .then(json => {
+          const placeholder = {};
+          json.data.filter(placeholder => placeholder.Key).forEach(placeholder => {
+            placeholders[toCamelCase(placeholder.Key)] = placeholder.Text;
+          });
+        })
+          .catch(() => {
+            // error loading placeholders
+            window.placeholders[prefix] = {};
+            resolve(window.placeholders[prefix]);
+          });
+    });
+  }  
+}
+
 init();
 
 export {
@@ -696,4 +733,5 @@ export {
   toClassName,
   waitForFirstImage,
   wrapTextNodes,
+  fetchPlaceholders,
 };
