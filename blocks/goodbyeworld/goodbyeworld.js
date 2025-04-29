@@ -1,4 +1,4 @@
-import {fetchPlaceholders, getMetadata} from '../../scripts/aem.js';
+import { fetchPlaceholders, getMetadata } from '../../scripts/aem.js';
 
 async function getTraslations() {
     const locale = getMetadata("locale");
@@ -8,12 +8,12 @@ async function getTraslations() {
 
 
 export default function decorate(block) {
-    
+
     const getFirstField = row => {
         const start_column = 1;
         const relevancy_size = 2;
-        for(let i=start_column;i<=relevancy_size;i++){
-            if(row.children[i].textContent !== ""){
+        for (let i = start_column; i <= relevancy_size; i++) {
+            if (row.children[i].textContent !== "") {
                 return row.children[i].textContent;
             }
         }
@@ -31,7 +31,7 @@ export default function decorate(block) {
         helperObj[count++] = {
             title: row.children[0].textContent,
             link: getFirstField(row),
-            };
+        };
 
         div.append(tempDiv);
     });
